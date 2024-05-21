@@ -167,7 +167,7 @@ pub opaque type State(user_state, user_message) {
 
 pub type Builder(user_state, user_message) {
   Builder(
-    on_init: fn() -> #(user_state, Option(Selector(user_message))),
+    on_init: fn() -> #(Int, user_state, Option(Selector(user_message))),
     on_close: fn(user_state) -> Nil,
     port: Int,
     handler: Handler(user_state, user_message),
@@ -175,13 +175,14 @@ pub type Builder(user_state, user_message) {
 }
 
 pub fn new(
-  init init: fn() -> #(user_state, Option(Selector(user_message))),
+  init init: fn(Int) -> #(user_state, Option(Selector(user_message))),
   handler handler: Handler(user_state, user_message),
+  port port: Int,
 ) -> Builder(user_state, user_message) {
   Builder(
-    on_init: init,
+    on_init: () -> init(port),
     on_close: fn(_state) { Nil },
-    port: 4000,
+    port: port,
     handler: handler,
   )
 }
